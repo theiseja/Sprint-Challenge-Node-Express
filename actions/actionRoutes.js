@@ -1,6 +1,6 @@
 const express = require("express");
-const actionDB = require("../data/helpers/actionModel");
 const projectDB = require("../data/helpers/projectModel");
+const actionDB = require("../data/helpers/actionModel");
 const router = express.Router();
 
 router.get("/", (req, res) => {
@@ -104,11 +104,9 @@ router.delete("/:id", (req, res) => {
           message: "Action has been successfully deleted from the DB."
         });
       } else {
-        res
-          .status(404)
-          .json({
-            message: "The action with that ID does not exist within the DB."
-          });
+        res.status(404).json({
+          message: "The action with that ID does not exist within the DB."
+        });
       }
     })
     .catch(() => {
