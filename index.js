@@ -1,5 +1,5 @@
 const express = require('express');
-const projectRouters = require('./projects/projectRoutes');
+const projectRoutes = require('./projects/projectRoutes');
 const actionRoutes = require('./actions/actionRoutes');
 const mwConfig = require('./data/mwConfig');
 
@@ -8,7 +8,7 @@ const server = express();
 
 mwConfig(server);
 
-server.use('./api/projects', projectRouters);
+server.use('./api/projects', projectRoutes);
 server.use('./api/actions', actionRoutes);
 
 server.listen(PORT, () => console.log(`Listening on port ${PORT}`));

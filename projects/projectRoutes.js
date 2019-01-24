@@ -68,8 +68,7 @@ router.post("/", (req, res) => {
             })
             .catch(() => {
               res.status(500).json({
-                error:
-                  "Project could not be saved to the DB."
+                error: "Project could not be saved to the DB."
               });
             });
         } else {
@@ -86,49 +85,52 @@ router.post("/", (req, res) => {
   }
 });
 
-router.put('/:id', (req, res) => {
-    const project = req.body
-    const { id } = req.params
-    if (project.name) {
-      projectDB
-        .update(id, project)
-        .then(count => {
-          if (count) {
-            projectDB.get(id).then(project => {
-              res.json(project)
-            })
-          } else {
-            res.status(404).json({
-              message: 'The project with the specified ID does not exist within the DB.'
-            })
-          }
-        })
-        .catch(() => {
-          res
-            .status(500)
-            .json({ error: 'The project information could not be modifed.' })
-        })
-    } else {
-      res.status(400).json({ errorMessage: 'Please provide more project info.' })
-    }
-  })
-
-  router.delete('/:id', (req, res) => {
-    const { id } = req.params
+router.put("/:id", (req, res) => {
+  const project = req.body;
+  const { id } = req.params;
+  if (project.name) {
     projectDB
-      .remove(id)
+      .update(id, project)
       .then(count => {
         if (count) {
-          res.json({ message: 'This project successfully deleted.' })
+          projectDB.get(id).then(project => {
+            res.json(project);
+          });
         } else {
           res.status(404).json({
-            message: 'The project with the specified ID does not exist.'
-          })
+            message:
+              "The project with the specified ID does not exist within the DB."
+          });
         }
       })
       .catch(() => {
-        res.status(500).json({ error: 'The project could not be removed from the DB.' })
-      })
-  })
+        res
+          .status(500)
+          .json({ error: "The project information could not be modifed." });
+      });
+  } else {
+    res.status(400).json({ errorMessage: "Please provide more project info." });
+  }
+});
+
+router.delete("/:id", (req, res) => {
+  const { id } = req.params;
+  projectDB
+    .remove(id)
+    .then(count => {
+      if (count) {
+        res.json({ message: "This project successfully deleted." });
+      } else {
+        res.status(404).json({
+          message: "The project with the specified ID does not exist."
+        });
+      }
+    })
+    .catch(() => {
+      res
+        .status(500)
+        .json({ error: "The project could not be removed from the DB." });
+    });
+});
 
 module.exports = router;
