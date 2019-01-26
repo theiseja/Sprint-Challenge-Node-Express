@@ -3,6 +3,8 @@ const projectDB = require("../data/helpers/projectModel");
 const actionDB = require("../data/helpers/actionModel");
 const router = express.Router();
 
+
+// tested and works fine use /api/actions in postman
 router.get("/", (req, res) => {
   actionDB
     .get()
@@ -16,6 +18,8 @@ router.get("/", (req, res) => {
     });
 });
 
+
+// tested and works fine use /api/actions in postman
 router.get("/:id", (req, res) => {
   const { id } = req.params;
   actionDB
@@ -37,6 +41,7 @@ router.get("/:id", (req, res) => {
     });
 });
 
+// tested and works fine use /api/actions in postman
 router.post("/", (req, res) => {
   const action = req.body;
   if (action) {
@@ -67,6 +72,8 @@ router.post("/", (req, res) => {
     res.status(400).json({ error: "Please provide more info" });
   }
 });
+
+// tested and works fine use /api/actions in postman
 router.put("/:id", (req, res) => {
   const action = req.body;
   const { id } = req.params;
@@ -94,35 +101,34 @@ router.put("/:id", (req, res) => {
   }
 });
 
+
+//tested and works fine use /api/actions/ in postman
 router.delete("/:id", (req, res) => {
   const { id } = req.params;
   projectDB
     .remove(id)
     .then(count => {
       if (count) {
-        projectDB
-          .getProjectActions(id)
-          .then(actions => {
-            actions.map(action => {
-              console.log('action.id', action.id)
-              actionDB.remove(action.id)
-               .then(() => {
-                 console.log("Action Deleted!")
-               })
-            })
-            res.json({ message: "This project successfully deleted." })
-          })
+        projectDB.getProjectActions(id).then(actions => {
+          actions.map(action => {
+            console.log("action.id", action.id);
+            actionDB.remove(action.id).then(() => {
+              console.log("Action Deleted!");
+            });
+          });
+          res.json({ message: "This project successfully deleted." });
+        });
       } else {
         res.status(404).json({
           message: "The project with the specified ID does not exist."
-        })
+        });
       }
     })
     .catch(() => {
       res
         .status(500)
         .json({ error: "The project could not be removed from the DB." });
-    })
-})
+    });
+});
 
 module.exports = router;

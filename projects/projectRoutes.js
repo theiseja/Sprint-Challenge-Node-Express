@@ -3,29 +3,25 @@ const projectDB = require("../data/helpers/projectModel");
 const actionDB = require("../data/helpers/actionModel");
 const router = express.Router();
 
-
 // tested and works fine use /api/projects in postman
-router.get('/', (req, res) => {
+router.get("/", (req, res) => {
   projectDB
-   .get()
-   .then((projects) => {
-    res
-     .json(projects)
-   })
-   .catch(() => {
-    res
-     .status(500)
-     .json({error: "Error getting projects from DB."})
-   })
- })
+    .get()
+    .then(projects => {
+      res.json(projects);
+    })
+    .catch(() => {
+      res.status(500).json({ error: "Error getting projects from DB." });
+    });
+});
 
- // tested and works fine use /api/projects/id in postman
+// tested and works fine use /api/projects/id in postman
 router.get("/:id", (req, res) => {
   const { id } = req.params;
   projectDB
     .get(id)
     .then(projects => {
-      console.log("projects", projects)
+      console.log("projects", projects);
       if (projects) {
         res.json(projects);
       } else {
@@ -38,7 +34,6 @@ router.get("/:id", (req, res) => {
       });
     });
 });
-
 
 // tested and works fine use /api
 router.get("/:id/actions", (req, res) => {
@@ -61,23 +56,23 @@ router.get("/:id/actions", (req, res) => {
     });
 });
 
-router.post('/', (req, res) => {
-  const { name, description, completed } = req.body
-   if (name, description, completed) {
-    projectDB
-     .insert({name, description, completed})
-     .then(({name, description, completed}) => {
-      res
-       .status(200)
-       .json({name, description, completed})
-     })
-   } else {
-    res
-     .status(500)
-     .json({error: "Error adding project to database."})
-   }
- })
 
+// tested and works fine use api/projects in postman
+router.post("/", (req, res) => {
+  const { name, description, completed } = req.body;
+  if ((name, description, completed)) {
+    projectDB
+      .insert({ name, description, completed })
+      .then(({ name, description, completed }) => {
+        res.status(200).json({ name, description, completed });
+      });
+  } else {
+    res.status(500).json({ error: "Error adding project to database." });
+  }
+});
+
+
+// tested and works fine use /api/projects in postman
 router.put("/:id", (req, res) => {
   const project = req.body;
   const { id } = req.params;
@@ -106,35 +101,34 @@ router.put("/:id", (req, res) => {
   }
 });
 
+
+// tested and works, but for whatever reason delete doesn't delete actions connected to the project. I'm assuming I'm missing something from the zoom on Thursday
 router.delete("/:id", (req, res) => {
   const { id } = req.params;
   projectDB
     .remove(id)
     .then(count => {
       if (count) {
-        projectDB
-          .getProjectActions(id)
-          .then(actions => {
-            actions.map(action => {
-              console.log('action.id', action.id)
-              actionDB.remove(action.id)
-               .then(() => {
-                 console.log("Action Deleted!")
-               })
-            })
-            res.json({ message: "This project successfully deleted." })
-          })
+        projectDB.getProjectActions(id).then(actions => {
+          actions.map(action => {
+            console.log("action.id", action.id);
+            actionDB.remove(action.id).then(() => {
+              console.log("Action Deleted!");
+            });
+          });
+          res.json({ message: "This project successfully deleted." });
+        });
       } else {
         res.status(404).json({
           message: "The project with the specified ID does not exist."
-        })
+        });
       }
     })
     .catch(() => {
       res
         .status(500)
         .json({ error: "The project could not be removed from the DB." });
-    })
-})
+    });
+});
 
 module.exports = router;
