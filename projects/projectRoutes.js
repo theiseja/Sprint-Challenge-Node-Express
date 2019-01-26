@@ -1,5 +1,6 @@
 const express = require("express");
 const projectDB = require("../data/helpers/projectModel");
+const actionDB = require("../data/helpers/actionModel");
 const router = express.Router();
 
 
@@ -63,15 +64,14 @@ router.get("/:id/actions", (req, res) => {
 router.post('/', (req, res) => {
   const { name, description, completed } = req.body
    if (name, description, completed) {
-    projectsDB
+    projectDB
      .insert({name, description, completed})
      .then(({name, description, completed}) => {
       res
        .status(200)
        .json({name, description, completed})
      })
-   }
-   else {
+   } else {
     res
      .status(500)
      .json({error: "Error adding project to database."})
