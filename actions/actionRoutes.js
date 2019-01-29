@@ -42,6 +42,7 @@ router.get("/:id", (req, res) => {
 // tested and works fine use /api/actions in postman
 router.post("/", (req, res) => {
   const action = req.body;
+  const id = req.params;
   if (!action.project_id || !action.description || !action.notes) {
     res
       .status(404)
@@ -53,6 +54,11 @@ router.post("/", (req, res) => {
     .then(action => {
       res.status(200).json(action);
     })
+  projectDB
+  .get(id)
+  .then(action => {
+    res.status(200).json(action);
+  })
     .catch(err => {
       res.status(500).json({ error: "Error adding action to server" });
     });
