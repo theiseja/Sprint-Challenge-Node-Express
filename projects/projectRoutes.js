@@ -60,7 +60,7 @@ router.get("/:id/actions", (req, res) => {
 // tested and works fine use api/projects in postman
 router.post("/", (req, res) => {
   const { name, description, completed } = req.body;
-  if ((!name, !description, completed)) {
+  if ((!name, !description, !completed)) {
     projectDB
       .insert({ name, description, completed })
       .then(({ name, description, completed }) => {

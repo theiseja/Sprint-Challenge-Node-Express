@@ -3,7 +3,6 @@ const projectDB = require("../data/helpers/projectModel");
 const actionDB = require("../data/helpers/actionModel");
 const router = express.Router();
 
-
 // tested and works fine use /api/actions in postman
 router.get("/", (req, res) => {
   actionDB
@@ -17,7 +16,6 @@ router.get("/", (req, res) => {
         .json({ error: "The actions could not be retrived from the server." });
     });
 });
-
 
 // tested and works fine use /api/actions in postman
 router.get("/:id", (req, res) => {
@@ -44,63 +42,47 @@ router.get("/:id", (req, res) => {
 // tested and works fine use /api/actions in postman
 router.post("/", (req, res) => {
   const action = req.body;
-  if (action) {
-    projectDB
-      .get(action.project_id)
-      .then(projects => {
-        if (projects) {
-          actionDB
-            .insert(action)
-            .then(action => {
-              res.status(201).json(action);
-            })
-            .catch(() => {
-              res.status(500).json({
-                error: "There was an error while saving action to the database."
-              });
-            });
-        } else {
-          res.status(404).json({ message: "This project does not exist." });
-        }
-      })
-      .catch(() => {
-        res.status(404).json({
-          error: "Information about the project could not be retrieved."
-        });
-      });
-  } else {
-    res.status(400).json({ error: "Please provide more info" });
+  if (!action.project_id || !action.description || !action.notes) {
+    res
+      .status(404)
+      .json({ message: "Please provide complete action information." });
+    return;
   }
+  actionDB
+    .insert(action)
+    .then(action => {
+      res.status(200).json(action);
+    })
+    .catch(err => {
+      res.status(500).json({ error: "Error adding action to server" });
+    });
 });
 
 // tested and works fine use /api/actions in postman
 router.put("/:id", (req, res) => {
   const action = req.body;
   const { id } = req.params;
-  if (action) {
-    actionDB
-      .update(id, action)
-      .then(count => {
-        if (count) {
-          actionDB.get(id).then(action => {
-            res.json(action);
-          });
-        } else {
-          res.status(404).json({
-            message: "The action with the specified ID does not exist."
-          });
-        }
-      })
-      .catch(() => {
-        res
-          .status(500)
-          .json({ error: "The action information could not be modifed." });
-      });
-  } else {
-    res.status(400).json({ errorMessage: "Please provide more info" });
+  if (!action.project_id || !action.description || !action.notes || !id) {
+    res.status(404).json({
+      message: "Please provide complete action information and/or ID."
+    });
+    return;
   }
+  actionDB
+    .update(id, action)
+    .then(updatedAction => {
+      if (updatedAction) {
+        res.status(200).json(updatedAction);
+      } else {
+        res.status(404).json({
+          message: "The action with the specified ID does not exist."
+        });
+      }
+    })
+    .catch(err => {
+      res.status(500).json({ error: "The action could not be updated: " });
+    });
 });
-
 
 //tested and works fine use /api/actions/ in postman
 router.delete("/:id", (req, res) => {
