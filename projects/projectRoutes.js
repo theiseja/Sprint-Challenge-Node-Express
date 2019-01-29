@@ -78,7 +78,7 @@ router.post("/", (req, res) => {
 router.put("/:id", (req, res) => {
   const project = req.body;
   const { id } = req.params;
-  if (!project.name || !project.description || !id) {
+  if (!project.name || !project.description) {
     projectDB
       .update(id, project)
       .then(count => {
