@@ -41,7 +41,7 @@ router.get("/:id/actions", (req, res) => {
   projectDB
     .getProjectActions(id)
     .then(actions => {
-      if (actions) {
+      if (actions.length) {
         res.json(actions);
       } else {
         res
