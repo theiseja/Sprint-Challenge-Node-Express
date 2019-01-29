@@ -60,10 +60,9 @@ router.get("/:id/actions", (req, res) => {
 router.post("/", (req, res) => {
   const project = req.body;
   if (!project.name || !project.description) {
-    res
+    return res
       .status(404)
       .json({ error: "Please provide complete project information." });
-    return;
   }
   projectDB
     .insert(project)
