@@ -56,27 +56,30 @@ router.get("/:id/actions", (req, res) => {
     });
 });
 
-
 // tested and works fine use api/projects in postman
 router.post("/", (req, res) => {
-  const { name, description, completed } = req.body;
-  if ((!name, !description, !completed)) {
-    projectDB
-      .insert({ name, description, completed })
-      .then(({ name, description, completed }) => {
-        res.status(200).json({ name, description, completed });
-      });
-  } else {
-    res.status(500).json({ error: "Error adding project to database." });
+  const project = req.body;
+  if (!project.name || !project.description) {
+    res
+      .status(404)
+      .json({ error: "Please provide complete project information." });
+    return;
   }
+  projectDB
+    .insert(project)
+    .then(project => {
+      res.status(200).json(project);
+    })
+    .catch(err => {
+      res.status(500).json({ error: "Error adding project to server" });
+    });
 });
-
 
 // tested and works fine use /api/projects in postman
 router.put("/:id", (req, res) => {
   const project = req.body;
   const { id } = req.params;
-  if (project.name) {
+  if (!project.name || !project.description || id) {
     projectDB
       .update(id, project)
       .then(count => {
@@ -101,8 +104,7 @@ router.put("/:id", (req, res) => {
   }
 });
 
-
-// tested and works, but for whatever reason delete doesn't delete actions connected to the project. I'm assuming I'm missing something from the zoom on Thursday
+// tested and works, deletes actions associated with the project.
 router.delete("/:id", (req, res) => {
   const { id } = req.params;
   projectDB
