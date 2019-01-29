@@ -42,7 +42,7 @@ router.get("/:id", (req, res) => {
 // tested and works fine use /api/actions in postman
 router.post("/", (req, res) => {
   const action = req.body;
-  if (!action.project_id || !action.description || !action.notes) {
+  if (action.project_id && action.description && action.notes) {
     res
       .status(404)
       .json({ message: "Please provide complete action information." });
