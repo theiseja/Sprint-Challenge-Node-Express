@@ -40,55 +40,51 @@ router.get("/:id", (req, res) => {
 });
 
 // tested and works fine use /api/actions in postman
-router.post("/", (req, res) => {
+router.post('/', (req, res) => {
   const action = req.body;
-  const id = req.params;
-  if (!action.project_id || !action.description || !action.notes) {
+  if(action.project_id && action.description && action.notes) {
+    actionDB.insert(action)
+      .then(newAction => {
+        res
+          .status(200)
+          .json({Added: newAction})
+      })
+      .catch(err => {
+        res
+          .status(500)
+          .json({message: "Failed to add action"})
+      })
+  } else {
     res
-      .status(404)
-      .json({ message: "Please provide complete action information." });
-    return;
+      .status(400)
+      .json({message: "Missing on or more (project_id/description/notes)"})
   }
-  actionDB
-    .insert(action)
-    .then(action => {
-      res.status(200).json(action);
-    })
-  projectDB
-  .get(id)
-  .then(action => {
-    res.status(200).json(action);
-  })
-    .catch(err => {
-      res.status(500).json({ error: "Error adding action to server" });
-    });
-});
+})
+
 
 // tested and works fine use /api/actions in postman
-router.put("/:id", (req, res) => {
+router.put('/:id', (req,res) => {
+  const {id} = req.params;
   const action = req.body;
-  const { id } = req.params;
-  if (!action.project_id || !action.description || !action.notes || !id) {
-    res.status(404).json({
-      message: "Please provide complete action information and/or ID."
-    });
-    return;
+  if(action.project_id && action.description && action.notes) {
+    actionDB.update(id, action)
+      .then(updatedAction => {
+        console.log(updatedAction)
+        res
+          .status(201)
+          .json(updatedAction)
+      })
+      .catch(err => {
+        res
+          .status(500)
+          .json({message: "Could not update the action"})
+      })
+  } else {
+    res
+      .status(400)
+      .json({message: "Missing on or more (project_id/description/notes)"})
   }
-  actionDB
-    .update(id, action)
-    .then(updatedAction => {
-      if (updatedAction) {
-        res.status(200).json(updatedAction);
-      } else {
-        res.status(404).json({
-          message: "The action with the specified ID does not exist."
-        });
-      }
-    })
-    .catch(err => {
-      res.status(500).json({ error: "The action could not be updated: " });
-    });
-});
+})
 
 //tested and works fine use /api/actions/ in postman
 router.delete("/:id", (req, res) => {
