@@ -41,25 +41,36 @@ router.get("/:id", (req, res) => {
 
 // tested and works fine use /api/actions in postman
 router.post('/', (req, res) => {
-  const action = req.body;
-  if(action.project_id && action.description && action.notes) {
-    actionDB.insert(action)
-      .then(newAction => {
-        res
-          .status(200)
-          .json({Added: newAction})
+  const action = req.body
+  if (action) {
+    projectDB
+      .get(action.project_id)
+      .then(projects => {
+        if (projects) {
+          actionDB
+            .insert(action)
+            .then(action => {
+              res.status(201).json(action)
+            })
+            .catch(() => {
+              res.status(500).json({
+                error: 'There was an error while saving action to the database.'
+              })
+            })
+        } else {
+          res.status(404).json({ message: 'This project does not exist.' })
+        }
       })
-      .catch(err => {
-        res
-          .status(500)
-          .json({message: "Failed to add action"})
+      .catch(() => {
+        res.status(404).json({
+          error: 'Project using that ID does not exist within the DB, please enter one that is contained within the DB.'
+        })
       })
   } else {
-    res
-      .status(400)
-      .json({message: "Missing on or more (project_id/description/notes)"})
+    res.status(400).json({ error: 'Please provide more info' })
   }
 })
+
 
 
 // tested and works fine use /api/actions in postman
