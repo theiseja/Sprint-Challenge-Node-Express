@@ -77,7 +77,7 @@ router.post('/', (req, res) => {
 router.put('/:id', (req,res) => {
   const {id} = req.params;
   const action = req.body;
-  if(action.project_id && action.description && action.notes) {
+  if(!action.project_id && action.description && action.notes) {
     actionDB.update(id, action)
       .then(updatedAction => {
         console.log(updatedAction)
@@ -93,7 +93,7 @@ router.put('/:id', (req,res) => {
   } else {
     res
       .status(400)
-      .json({message: "Missing on or more (project_id/description/notes)"})
+      .json({message: "Missing one or more (project_id/description/notes)"})
   }
 })
 
