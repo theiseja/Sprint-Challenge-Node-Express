@@ -74,28 +74,71 @@ router.post('/', (req, res) => {
 
 
 // tested and works fine use /api/actions in postman
-router.put('/:id', (req,res) => {
+router.put('/:id', (req, res) => {
   const {id} = req.params;
   const action = req.body;
-  if(!action.project_id && action.description && action.notes) {
-    actionDB.update(id, action)
-      .then(updatedAction => {
-        console.log(updatedAction)
-        res
-          .status(201)
-          .json(updatedAction)
+  
+  if (action.project_id && action.description && action.notes) {
+      projectDB.get(action.project_id)
+          .then(response => {
+              console.log("the response is:", response);
+              actionDB.update(id, action)
+                  .then(count => {
+                      if (count === null) {
+                          res
+                          .status(404)
+                          .json({
+                              message: "That action ID is invalid."
+                          })
+                      } else {
+                          actionDB.get(id)
+                              .then(action => {
+                                  res.json(action)
+                              })
+                      }
+                  })
+                  .catch(err => {
+                      res
+                      .status(500)
+                      .json({
+                          message: "Unable to update this action."
+                      })
+                  })
+          })
+          .catch(err => {
+              res
+              .status(404)
+              .json({
+                  message: "Invalid project ID."
+              })
+          })
+  } else if (action.project_id && action.description){
+      res
+      .status(400)
+      .json({
+          message: "Actions need notes."
       })
-      .catch(err => {
-        res
-          .status(500)
-          .json({message: "Could not update the action"})
+  } else if (action.project_id && action.notes) {
+      res
+      .status(400)
+      .json({
+          message: "Actions need a description."
+      })
+  } else if (action.notes && action.description) {
+      res
+      .status(400)
+      .json({
+          message: "Actions need a valid project ID."
       })
   } else {
-    res
+      res
       .status(400)
-      .json({message: "Missing one or more (project_id/description/notes)"})
+      .json({
+          message: "Actions need a valid project ID, name and a description."
+      })
   }
-})
+});
+
 
 //tested and works fine use /api/actions/ in postman
 router.delete("/:id", (req, res) => {
