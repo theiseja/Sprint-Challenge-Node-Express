@@ -115,19 +115,17 @@ router.put("/:id", (req, res) => {
 });
 
 //tested and works fine use /api/actions/:id in postman
-router.delete('/:id', (req, res) => {
-  const {id} = req.params;
-  actionDB.remove(id)
+router.delete("/:id", (req, res) => {
+  const { id } = req.params;
+  actionDB
+    .remove(id)
     .then(count => {
-      console.log(count)
-      res
-        .status(200)
-        .json({message:`Action successfully removed from DB.`})
+      console.log(count);
+      res.status(200).json({ message: `Action successfully removed from DB.` });
     })
     .catch(err => {
-      res
-        .status(500)
-        .catch({message: "Failed to remove Action from DB."})
-    })
-})
+      res.status(500).catch({ message: "Failed to remove Action from DB." });
+    });
+});
+
 module.exports = router;
