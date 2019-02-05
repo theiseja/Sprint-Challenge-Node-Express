@@ -73,6 +73,7 @@ router.post("/", (req, res) => {
 });
 
 // tested and works fine use /api/actions in postman
+// tested and works fine use /api/actions in postman
 router.put("/:id", (req, res) => {
   const { id } = req.params;
   const action = req.body;
@@ -106,18 +107,18 @@ router.put("/:id", (req, res) => {
           message: "Invalid project ID."
         });
       });
-  } else if (action.project_id && action.description && action.notes) {
-    res.status(400).json({
-      message: "Actions need notes."
-    });
-  } else if (action.project_id && action.notes) {
-    res.status(400).json({
-      message: "Actions need a description."
-    });
-  } else if (action.notes && action.description) {
-    res.status(400).json({
-      message: "Actions need a valid project ID."
-    });
+  // } else if (action.project_id && action.description && action.notes) {
+  //   res.status(400).json({
+  //     message: "Actions need notes."
+  //   });
+  // } else if (action.project_id && action.notes) {
+  //   res.status(400).json({
+  //     message: "Actions need a description."
+  //   });
+  // } else if (action.notes && action.description) {
+  //   res.status(400).json({
+  //     message: "Actions need a valid project ID."
+  //   });
   } else {
     res.status(400).json({
       message: "Actions need a valid project ID, name and a description."
