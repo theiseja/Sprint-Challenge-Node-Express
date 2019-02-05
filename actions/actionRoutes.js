@@ -42,7 +42,7 @@ router.get("/:id", (req, res) => {
 // tested and works fine use /api/actions in postman
 router.post("/", (req, res) => {
   const action = req.body;
-  if (action) {
+  if (action.project_id && action.description && action.notes) {
     projectDB
       .get(action.project_id)
       .then(projects => {
@@ -106,7 +106,7 @@ router.put("/:id", (req, res) => {
           message: "Invalid project ID."
         });
       });
-  } else if (action.project_id && action.description) {
+  } else if (action.project_id && action.description && action.notes) {
     res.status(400).json({
       message: "Actions need notes."
     });
