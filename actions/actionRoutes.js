@@ -107,18 +107,6 @@ router.put("/:id", (req, res) => {
           message: "Invalid project ID."
         });
       });
-  // } else if (action.project_id && action.description && action.notes) {
-  //   res.status(400).json({
-  //     message: "Actions need notes."
-  //   });
-  // } else if (action.project_id && action.notes) {
-  //   res.status(400).json({
-  //     message: "Actions need a description."
-  //   });
-  // } else if (action.notes && action.description) {
-  //   res.status(400).json({
-  //     message: "Actions need a valid project ID."
-  //   });
   } else {
     res.status(400).json({
       message: "Actions need a valid project ID, name and a description."
@@ -126,33 +114,20 @@ router.put("/:id", (req, res) => {
   }
 });
 
-//tested and works fine use /api/actions/ in postman
-router.delete("/:id", (req, res) => {
-  const { id } = req.params;
-  projectDB
-    .remove(id)
+//tested and works fine use /api/actions/:id in postman
+router.delete('/:id', (req, res) => {
+  const {id} = req.params;
+  actionDB.remove(id)
     .then(count => {
-      if (count) {
-        projectDB.getProjectActions(id).then(actions => {
-          actions.map(action => {
-            console.log("action.id", action.id);
-            actionDB.remove(action.id).then(() => {
-              console.log("Action Deleted!");
-            });
-          });
-          res.json({ message: "This project successfully deleted." });
-        });
-      } else {
-        res.status(404).json({
-          message: "The project with the specified ID does not exist."
-        });
-      }
+      console.log(count)
+      res
+        .status(200)
+        .json({message:`Action successfully removed from DB.`})
     })
-    .catch(() => {
+    .catch(err => {
       res
         .status(500)
-        .json({ error: "The project could not be removed from the DB." });
-    });
-});
-
+        .catch({message: "Failed to remove Action from DB."})
+    })
+})
 module.exports = router;
