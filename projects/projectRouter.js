@@ -56,6 +56,22 @@ router.get("/", (req, res) => {
       });
   });
 
+  // confirmed working, can't post a new user without the description or name provided.
+router.post("/", (req, res) => {
+    const project = req.body;
+    if (!project.name || !project.description) {
+        return res.status(404).json({ error: 'Please provide complete project information in order to post a new one.'})
+    }
+    projectDB
+    .insert(project)
+    .then(project => {
+        res.status(200).json(project);
+    })
+    .catch(error => {
+        res.status(500).json({ error: "Error adding new project to the database."});
+    });
+});
+
 
 
 
