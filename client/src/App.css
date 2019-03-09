@@ -37,7 +37,10 @@ body {
 }
 
 div {
+  font-family: 'IBM Plex Sans', sans-serif;
   font-weight: bold;
+  font-size: 0.9rem;
   margin:0 0 10px 0;
   margin-bottom: 20px;
 }
+
